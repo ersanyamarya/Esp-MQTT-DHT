@@ -8,3 +8,5 @@
 
 #define DHTPIN <DHTPIN>
 #define DHTTYPE <DHT11 || DHT22>
+
+#define SEALEVELPRESSURE_HPA (1013.25)

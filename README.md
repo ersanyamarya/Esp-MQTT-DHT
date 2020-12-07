@@ -17,6 +17,8 @@ copy `example.env.h` to `env.h` in `src` directory
 
 #define DHTPIN <DHTPIN>
 #define DHTTYPE <DHT11 || DHT22>
+
+#define SEALEVELPRESSURE_HPA (1013.25)
 ```
 
 Make the required changes

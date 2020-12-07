@@ -9,6 +9,7 @@ float hum;
 AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
+Adafruit_BMP280 bmp;
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup()
@@ -16,6 +17,7 @@ void setup()
   Serial.begin(115200);
   Serial.println();
   dht.begin();
+  bmp.begin(0x76);
   mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
@@ -40,12 +42,13 @@ void loop()
 
     // Save the last time a new reading was published
     previousMillis = currentMillis;
-    temp = dht.readTemperature();
-    hum = dht.readHumidity();
     doc["location"] = "5";
     doc["MAC"] = WiFi.macAddress();
-    doc["temp"] = temp;
-    doc["hum"] = hum;
+    doc["temp"] = dht.readTemperature();
+    doc["hum"] = dht.readHumidity();
+    doc["tempBmp"] = bmp.readTemperature();
+    doc["pressure"] = bmp.readPressure() / 100.0F;
+    doc["altitude"] = bmp.readAltitude(SEALEVELPRESSURE_HPA);
 
     // Checking if values a valid
     if (isnan(hum) || isnan(temp))
